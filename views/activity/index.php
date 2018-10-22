@@ -8,7 +8,10 @@
 
 use yii\bootstrap\ActiveForm;
 use yii\bootstrap\Html;
+use yii\helpers\Url;
 ?>
+<a class="btn btn-primary active" href="<?= Url::to(['calendar/index']) ?>" role="button" aria-pressed="true"">Перейти в календарь</a>
+
   <h1><?= $model->title ?></h1>
 
 <?php if ($model->startDay == $model->endDay): ?>
@@ -43,3 +46,5 @@ use yii\bootstrap\Html;
 <?php else: ?>
   <span>Нет</span>
 <?php endif; ?>
+
+
