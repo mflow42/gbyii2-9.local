@@ -9,18 +9,12 @@ namespace app\assets;
 
 use yii\web\AssetBundle;
 
-/**
- * Main application asset bundle.
- *
- * @author Qiang Xue <qiang.xue@gmail.com>
- * @since 2.0
- */
-class AppAsset extends AssetBundle
+class CalendarAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'css/site.css',
+        'css/calendar.css',
     ];
     public $js = [
     ];

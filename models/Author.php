@@ -1,103 +1,55 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: User
- * Date: 21.10.2018
- * Time: 14:17
- */
 
 namespace app\models;
 
-use yii\base\Model;
+use Yii;
 
 /**
- * Activity класс
+ * This is the model class for table "author".
  *
- * Отражает сущность хранимого в календаре события
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ *
+ * @property BookAuthor[] $bookAuthors
  */
-class Activity extends Model
+class Author extends \yii\db\ActiveRecord
 {
     /**
-     * Название события
-     *
-     * @var string
+     * {@inheritdoc}
      */
-    public $title;
-
-    /**
-     * День начала события. Хранится в Unix timestamp
-     *
-     * @var int
-     */
-    public $startDay;
-
-    /**
-     * День завершения события. Хранится в Unix timestamp
-     *
-     * @var int
-     */
-    public $endDay;
-
-    /**
-     * ID автора, создавшего события
-     *
-     * @var int
-     */
-    public $idAuthor;
-
-    /**
-     * Описание события
-     *
-     * @var string
-     */
-    public $body;
-
-    /**
-     * Повторяющееся или нет
-     *
-     * @var bool
-     */
-    public $isRepeat = false;
-
-    /**
-     * Является ли блокирующим
-     *
-     * @var bool
-     */
-    public $isBlocker = false;
-
-    /**
-     * Выходной или рабочий день
-     *
-     * @var string
-     */
-    public $isWeekend;
-
-    public function __construct($title, $startDay, $endDay, $idAuthor, $body, $isRepeat, $isBlocker, $isWeekend)
+    public static function tableName()
     {
-        parent::__construct();
-        $this->title = $title;
-        $this->startDay = $startDay;
-        $this->endDay = $endDay;
-        $this->isWeekend = $isWeekend;
-        $this->idAuthor = $idAuthor;
-        $this->body = $body;
-        $this->isRepeat = $isRepeat;
-        $this->isBlocker = $isBlocker;
+        return 'author';
     }
 
-    public function attributeLabels()
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
     {
         return [
-                'title'     => 'Название события',
-                'startDay'  => 'Дата начала',
-                'endDay'    => 'Дата завершения',
-                'isWeekend' => 'Выходного дня',
-                'idAuthor'  => 'Инициатор',
-                'body'      => 'Описание события',
-                'isRepeat'  => 'Повторяющееся',
-                'isBlocker' => 'Блокирующее',
+            [['name', 'email'], 'string', 'max' => 30],
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'name' => 'Name',
+            'email' => 'Email',
+        ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getBookAuthors()
+    {
+        return $this->hasMany(BookAuthor::className(), ['author_id' => 'id']);
+    }
 }

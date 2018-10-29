@@ -5,22 +5,21 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "author".
+ * This is the model class for table "book".
  *
  * @property int $id
- * @property string $name
- * @property string $email
+ * @property string $title
  *
  * @property BookAuthor[] $bookAuthors
  */
-class Author extends \yii\db\ActiveRecord
+class Book extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'author';
+        return 'book';
     }
 
     /**
@@ -29,7 +28,7 @@ class Author extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'email'], 'string', 'max' => 30],
+            [['title'], 'string', 'max' => 255],
         ];
     }
 
@@ -40,8 +39,7 @@ class Author extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'email' => 'Email',
+            'title' => 'Title',
         ];
     }
 
@@ -50,6 +48,24 @@ class Author extends \yii\db\ActiveRecord
      */
     public function getBookAuthors()
     {
-        return $this->hasMany(BookAuthor::className(), ['author_id' => 'id']);
+        return $this->hasMany(BookAuthor::className(), ['book_id' => 'id']);
+    }
+
+    /**
+     * Если уже есть одна связь hasMany
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAuthors()
+    {
+        return $this->hasMany(Author::class, ['id' => 'author_id'])->via('bookAuthors');
+    }
+
+    /**
+     * Если ранее связи не описаны
+     * @return \yii\db\ActiveQuery
+     */
+    public function getAuthors2()
+    {
+        return $this->hasMany(Author::class, ['id' => 'author_id'])->viaTable('bookAuthor', ['book_id' => 'id']);
     }
 }

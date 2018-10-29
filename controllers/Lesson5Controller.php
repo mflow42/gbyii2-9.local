@@ -8,122 +8,105 @@
 
 namespace app\controllers;
 
+use app\models\User;
 use yii\web\Controller;
-use yii\db\Query;
+use app\models\Person;
+use app\models\Position;
+use app\models\Author;
+use app\models\Book;
+
+class Lesson5Controller extends Controller
+{
+    public function actionIndex()
+    {
+
+        $data = Person::findOne(['id' => 1]);
+        $data2 = Person::find()->where(['id' => 1])->limit(1)->asArray()->one();
+        $data3 = Person::find()->asArray()->limit(1)->one();
+
+        $dataAll1 = Person::findAll('1=1');
+        $dataAll2 = Person::find()->asArray()->all();
 
 
-class Lesson4Controller extends Controller {
-  public function actionIndex() {
-    //SQL запросы
-    
-    //Все записи
-    //$data = \Yii::$app->db->createCommand('SELECT * FROM person')->queryAll();
-    
-    //Одна запись
-    $data = \Yii::$app->db->createCommand('SELECT * FROM person')->queryOne();
-    
-    //Получение одной колонки
-    $column = \Yii::$app->db->createCommand('SELECT name FROM person')->queryColumn();
-    
-    //Получение одного значения - обвчно используется с агрегатными функциями
-    $count = \Yii::$app->db->createCommand('SELECT count(*) FROM person')->queryScalar();
-    
-    //Привязка параметров
-    $idParam = 3;
-    $dataParam = \Yii::$app->db->createCommand('SELECT * FROM person where id =:id ')
-            ->bindValue(':id', $idParam)
-            ->queryOne();
-    
-    $sql = 'select p.id, p.name, ps.id, ps.name from `person` p right JOIN `position` ps on ps.id = p.position_id;';
-    $dataStrong = \Yii::$app->db->createCommand($sql)->queryAll();
-    
-    return $this->render('index', [
-            'data' => $data,
-            'column' => $column,
-            'count' => $count,
-            'dataParam' => $dataParam,
-            'dataStrong' => $dataStrong,
-    ]);
-  }
-  
-  public function actionInsert() {
-    //insert, update, delete
-    \Yii::$app->db->createCommand()->insert('person', [
-            'name' => 'Новый пользователь',
-            'position_id' => 2
-    ])->execute();
-  }
-  
-  public function actionTransaction(){
-    $currentDb = \Yii::$app->db;
-    $transaction = $currentDb->beginTransaction();
-    
-    try {
-      \Yii::$app->db->createCommand()->insert('person', [
-              'name' => 'Новый пользователь 2 (tr)',
-              'position_id' => 2
-      ])->execute();
-      \Yii::$app->db->createCommand()->insert('person', [
-              'name' => 'Новый пользователь 3 (tr)',
-              'position_id' => 3
-      ])->execute();
-      
-      //Если все успешно
-      $transaction->commit();
-      //Если не успешно
-      //$transaction->rollBack();
-    } catch (\Exception $exception) {
-      $transaction->rollBack(); //Отмена транзакции
-      throw $exception;
+        //Если запрос не нужно настраивать
+        $position = Person::findOne(['id' => 1])->position;
+
+        //Запрос с настройкой
+        $position2 = Person::findOne(['id' => 1])->getPosition()->asArray()->one();
+        //$position2 = Person::findOne(['id' => 1])->getPosition()->asArray()->all();
+
+        //С обратной стороны
+        $people = Position::findOne(['id' => '1'])->people;
+        $people2 = Position::findOne(['id' => '1'])->getPeople()->asArray()->all();
+
+        return $this->render('index', [
+            'data'      => $data,
+            'data2'     => $data2,
+            'data3'     => $data3,
+            'dataAll1'  => $dataAll1,
+            'dataAll2'  => $dataAll2,
+            'position'  => $position,
+            'position2' => $position2,
+            'people'    => $people,
+            'people2'   => $people2,
+        ]);
     }
-    
-  }
-  
-  public function actionDao() {
-    
-    $query = (new Query())
-            ->select('*')
-            ->from('person')
-            ->limit(2);
-    $data = $query->all();
-    
-    $query2 = (new Query())
-            ->select('id, name')
-            ->from('person')
-            ->where(['id' => 2])
-            ->limit(1);
-    $data2 = $query2->one();
-    
-    $queryWithParam = (new Query())
-            ->select(['id', 'name'])
-            ->from('person')
-            ->where('id=:id')
-            ->addParams([':id' => 3])
-            ->limit(1);
-  
-    $sqlOne = $queryWithParam->createCommand()->sql;
-    $sqlTwo = $queryWithParam->createCommand()->rawSql; //С учетом всех параметров
-    
-    $dataWithParam = $queryWithParam->one();
-    
-//select p.id, p.name, ps.id, ps.name from `person` p inner JOIN `position` ps on ps.id = p.position_id;
 
-    $queryJoin = (new Query())
-            ->select('p.id, p.name, ps.id, ps.name')
-            ->from('`person` p')
-            ->innerJoin('`position` ps', 'ps.id = p.position_id');
-    $sql = $queryJoin->createCommand()->sql;
-    $dataJoin = $queryJoin->all();
-    
-    
-    return $this->render('dao', [
-            'data'=>$data,
-            'data2'=>$data2,
-            'dataWithParam'=>$dataWithParam,
-            'dataJoin'=>$dataJoin,
-            'sql'=>$sql,
-            'sqlOne'=>$sqlOne,
-            'sqlTwo'=>$sqlTwo,
-    ]);
-  }
+    public function actionInsert()
+    {
+        $model = new Person();
+        $model->name = 'New user';
+        $model->position_id = 1;
+        $model->save();
+    }
+
+    public function actionUpdate()
+    {
+        $model = Person::findOne(['name' => 'New user']);
+        //$model->name = 'New user';
+        $model->position_id = 3;
+        $model->save();
+    }
+
+    public function actionDelete()
+    {
+        //Person::deleteAll(['name' => 'New user']);
+        $model = Person::findOne(['name' => 'New user']);
+        $model->delete(); //Удаление 1 записи
+    }
+
+    public function actionMany()
+    {
+        $authorsIds = Book::findOne(['id' => 1])->bookAuthors;
+
+        $authorsVia = Book::findOne(['id' => 1])->authors;
+        $authorsViaArray = Book::findOne(['id' => 1])->getAuthors()->asArray()->all();
+
+        $authorsViaTable = Book::findOne(['id' => 1])->authors2;
+        $authorsViaArrayTable = Book::findOne(['id' => 1])->getAuthors2()->asArray()->all();
+        $authorsViaArrayTableSql = Book::findOne(['id' => 1])->getAuthors2()->createCommand()->rawSql;
+
+        return $this->render('many', [
+            'authorsIds'              => $authorsIds,
+            'authorsVia'              => $authorsVia,
+            'authorsViaArray'         => $authorsViaArray,
+            'authorsViaTable'         => $authorsViaTable,
+            'authorsViaArrayTable'    => $authorsViaArrayTable,
+            'authorsViaArrayTableSql' => $authorsViaArrayTableSql,
+        ]);
+    }
+
+    public function actionAddUser()
+    {
+        $user = new User();
+        $user->login = 'admin';
+        $user->password = $user->getPasswordHash('1234');
+        $user->name = 'Олег';
+
+        if ($user->save()) {
+            \Yii::info('Успешно');
+        } else {
+
+        }
+    }
 }

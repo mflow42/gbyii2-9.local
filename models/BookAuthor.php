@@ -5,21 +5,23 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "book".
+ * This is the model class for table "bookAuthor".
  *
  * @property int $id
- * @property string $title
+ * @property int $book_id
+ * @property int $author_id
  *
- * @property BookAuthor[] $bookAuthors
+ * @property Author $author
+ * @property Book $book
  */
-class Book extends \yii\db\ActiveRecord
+class BookAuthor extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'book';
+        return 'bookAuthor';
     }
 
     /**
@@ -28,7 +30,10 @@ class Book extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title'], 'string', 'max' => 255],
+            [['book_id', 'author_id'], 'required'],
+            [['book_id', 'author_id'], 'integer'],
+            [['author_id'], 'exist', 'skipOnError' => true, 'targetClass' => Author::className(), 'targetAttribute' => ['author_id' => 'id']],
+            [['book_id'], 'exist', 'skipOnError' => true, 'targetClass' => Book::className(), 'targetAttribute' => ['book_id' => 'id']],
         ];
     }
 
@@ -39,33 +44,24 @@ class Book extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
+            'book_id' => 'Book ID',
+            'author_id' => 'Author ID',
         ];
     }
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getBookAuthors()
+    public function getAuthor()
     {
-        return $this->hasMany(BookAuthor::className(), ['book_id' => 'id']);
+        return $this->hasOne(Author::class, ['id' => 'author_id']);
     }
 
     /**
-     * Если уже есть одна связь hasMany
      * @return \yii\db\ActiveQuery
      */
-    public function getAuthors()
+    public function getBook()
     {
-        return $this->hasMany(Author::class, ['id' => 'author_id'])->via('bookAuthors');
-    }
-
-    /**
-     * Если ранее связи не описаны
-     * @return \yii\db\ActiveQuery
-     */
-    public function getAuthors2()
-    {
-        return $this->hasMany(Author::class, ['id' => 'author_id'])->viaTable('bookAuthor', ['book_id' => 'id']);
+        return $this->hasOne(Book::class, ['id' => 'book_id']);
     }
 }

@@ -8,51 +8,11 @@
 
 namespace app\controllers;
 
-use app\models\Calendar;
-use app\models\CalendarFormAdd;
-use yii\web\Controller;
-
-
-class CalendarController extends Controller
+class DayController extends \yii\web\Controller
 {
     public function actionIndex()
     {
-        $model = new Calendar('Календарь');
-        $now = getDate();
-
-        if (!\Yii::$app->request->get('day')
-            or !\Yii::$app->request->get('year')
-            or \Yii::$app->request->get('year') < $now['year']
-            or \Yii::$app->request->get('day') > 365
-            or \Yii::$app->request->get('day') < 0
-            or (\Yii::$app->request->get('year') == $now['year'] && \Yii::$app->request->get('day') <$now['yday'])
-            or \Yii::$app->request->get('year') - $now['year'] > 1)
-        {
-            $data = $model -> getStartDay();
-            $day = $data['day'];
-            $year = $data['year'];
-            $this -> redirect(Url::to(['/calendar/index', 'day' => $day, 'year' => $year]));
-        }
-
-        if (\Yii::$app->request->get('action')) {
-            $action = \Yii::$app->request->get('action');
-            $day = \Yii::$app->request->get('day');
-            $year = \Yii::$app->request->get('year');
-            $data = $model -> getStartDay($action, $day, $year);
-            $day = $data['day'];
-            $year = $data['year'];
-            $this -> redirect(Url::to(['/calendar/index', 'day' => $day, 'year' => $year]));
-        }
-
-        return $this->render('index', ['model' => $model]);
+        return $this->render('index');
     }
 
-    //Add
-    public function actionAdd()
-    {
-        $model = new CalendarFormAdd();
-        return $this->render('add', [
-            'model' => $model
-        ]);
-    }
 }
