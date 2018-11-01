@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Class m181025_203049_insert_date
  */
-class m181025_203049_insert_date extends Migration {
+class m181025_203049_insert_data_person extends Migration {
   /**
    * {@inheritdoc}
    */

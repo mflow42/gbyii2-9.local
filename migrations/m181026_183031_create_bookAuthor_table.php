@@ -19,7 +19,7 @@ class m181026_183031_create_bookAuthor_table extends Migration
         ]);
 
         $this->addForeignKey(
-            'fk-bookAuthor-book',
+            'fk_bookAuthor_book',
             'bookAuthor',
             'book_id',
             'book',
@@ -27,7 +27,7 @@ class m181026_183031_create_bookAuthor_table extends Migration
         );
 
         $this->addForeignKey(
-            'fk-bookAuthor-author',
+            'fk_bookAuthor_author',
             'bookAuthor',
             'author_id',
             'author',
@@ -40,8 +40,8 @@ class m181026_183031_create_bookAuthor_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropForeignKey('fk-bookAuthor-book', 'bookAuthor');
-        $this->dropForeignKey('fk-bookAuthor-author', 'bookAuthor');
+        $this->dropForeignKey('fk_bookAuthor_book', 'bookAuthor');
+        $this->dropForeignKey('fk_bookAuthor_author', 'bookAuthor');
         $this->dropTable('bookAuthor');
     }
 }
