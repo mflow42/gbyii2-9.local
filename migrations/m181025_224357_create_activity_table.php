@@ -15,12 +15,12 @@ class m181025_224357_create_activity_table extends Migration
         $this->createTable('activity', [
             'id'          => $this->primaryKey(),
             'title'       => $this->string(255)->notNull(),
-            'start_day'   => $this->date(11),
+            'start_day'   => $this->date(11)->notNull(),
             'end_day'     => $this->date(11),
             'user_id'  => $this->integer(11)->notNull(),
             'body'        => $this->string(2000)->notNull(),
-            'is_repeated' => $this->boolean(),
-            'is_blocker'  => $this->boolean(),
+            'is_repeated' => $this->boolean()->notNull(),
+            'is_blocker'  => $this->boolean()->notNull(),
         ]);
 
         $this->addForeignKey(
