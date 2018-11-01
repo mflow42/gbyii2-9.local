@@ -19,7 +19,7 @@ class m181101_220606_create_user_table extends Migration
             'name'         => $this->string(50)->notNull(),
             'email'        => $this->string(50)->notNull(),
             'created_at'   => $this->integer(11)->notNull(),
-            'updated_at'   => $this->integer(11),
+            'updated_at'   => $this->integer(11)->notNull(),
             'auth_key'     => $this->string(255),
             'access_token' => $this->string(255),
             'banned'       => $this->boolean()->notNull(),

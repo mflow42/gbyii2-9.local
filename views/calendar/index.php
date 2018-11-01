@@ -19,11 +19,11 @@ use \app\assets\CalendarAsset;
 <?php
 CalendarAsset::register($this);
 
-$action = \Yii::$app->request->get('action');
-$day = \Yii::$app->request->get('day');
-$year = \Yii::$app->request->get('year');
-$dates = $model->getDates($action, $day, $year);
-$now = getdate();
+//$action = \Yii::$app->request->get('action');
+//$day = \Yii::$app->request->get('day');
+//$year = \Yii::$app->request->get('year');
+//$dates = $model->getDates($action, $day, $year);
+//$now = getdate();
 ?>
 <div class="calendar">
   <div class="calendar__head">
@@ -54,18 +54,19 @@ $now = getdate();
     <div>вс</div>
   </div>
   <div class="calendar__flex">
-      <?php foreach ($dates as $date): ?>
-        <div class="calendar__day day">
-          <div class="day__head">
-              <?php if ($date['day'] === $now['mday'] && $date['month'] === $now['month'] && $date['year'] === $now['year']): ?>
-                <div class="day__date day__date_now"><?= Html::encode($date['day']) ?> <?= Html::encode($date['month']) ?></div>
-              <?php else: ?>
-                <div class="dat__date"><?= Html::encode($date['day']) ?> <?= Html::encode($date['month']) ?></div>
-              <?php endif; ?>
-            <a href="<?= Url::to(['/activity/add', 'id' => 1]) ?>" class="day__event">Тестовое событие</a>
-          </div>
-          <a href="<?= Url::toRoute('/calendar/add') ?>" class="day__create">+</a>
-        </div>
-      <?php endforeach; ?>
+<!--      --><?php //foreach ($dates as $date): ?>
+<!--        <div class="calendar__day day">-->
+<!--          <div class="day__head">-->
+<!--              --><?php //if ($date['day'] === $now['mday'] && $date['month'] === $now['month'] && $date['year'] === $now['year']): ?>
+<!--                <div class="day__date day__date_now">--><?//= Html::encode($date['day']) ?><!-- --><?//= Html::encode($date['month']) ?><!--</div>-->
+<!--              --><?php //else: ?>
+<!--                <div class="dat__date">--><?//= Html::encode($date['day']) ?><!-- --><?//= Html::encode($date['month']) ?><!--</div>-->
+<!--              --><?php //endif; ?>
+<!--            <a href="--><?//= Url::to(['/activity/add', 'id' => 1]) ?><!--" class="day__event">Тестовое событие</a>-->
+<!--          </div>-->
+<!--          <a href="--><?//= Url::toRoute('/calendar/add') ?><!--" class="day__create">+</a>-->
+<!--        </div>-->
+<!--      --><?php //endforeach; ?>
   </div>
 </div>
+<?php var_dump($activities);

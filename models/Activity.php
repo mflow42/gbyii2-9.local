@@ -3,6 +3,8 @@
 namespace app\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "activity".
@@ -22,12 +24,28 @@ use Yii;
  */
 class Activity extends \yii\db\ActiveRecord
 {
+    public $events = []; //событие
+    public $date_event;  //дата
+
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
         return 'activity';
+    }
+
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class'      => TimestampBehavior::class,
+                'attributes' => [
+                    ActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    ActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ]
+            ],
+        ];
     }
 
     /**
@@ -76,5 +94,15 @@ class Activity extends \yii\db\ActiveRecord
     public function getFkUser()
     {
         return $this->hasOne(User::className(), ['id' => 'fk_user_id']);
+    }
+
+    public function daysAndEvents($id = null)
+    {
+        $daysInMonth = date('t');
+        for ($i = 1; $i <= $daysInMonth; $i++) {
+            $time = mktime(0, 0, 0, date('m'), $i, date('Y'));
+            $this->events[$i] = self::findAll(['started_at' => $time]);
+        }
+        return $this->events;
     }
 }
