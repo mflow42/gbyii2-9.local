@@ -1,103 +1,80 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: User
- * Date: 21.10.2018
- * Time: 14:17
- */
 
 namespace app\models;
 
-use yii\base\Model;
+use Yii;
 
 /**
- * Activity класс
+ * This is the model class for table "activity".
  *
- * Отражает сущность хранимого в календаре события
+ * @property int    $id
+ * @property int    $fk_user_id
+ * @property string $title
+ * @property string $description
+ * @property string $created_at
+ * @property string $updated_at
+ * @property string $started_at
+ * @property string $ended_at
+ * @property int    $is_repeated
+ * @property int    $is_blocker
+ *
+ * @property User   $fkUser
  */
-class Activity extends Model
+class Activity extends \yii\db\ActiveRecord
 {
     /**
-     * Название события
-     *
-     * @var string
+     * {@inheritdoc}
      */
-    public $title;
-
-    /**
-     * День начала события. Хранится в Unix timestamp
-     *
-     * @var int
-     */
-    public $startDay;
-
-    /**
-     * День завершения события. Хранится в Unix timestamp
-     *
-     * @var int
-     */
-    public $endDay;
-
-    /**
-     * ID автора, создавшего события
-     *
-     * @var int
-     */
-    public $idAuthor;
-
-    /**
-     * Описание события
-     *
-     * @var string
-     */
-    public $body;
-
-    /**
-     * Повторяющееся или нет
-     *
-     * @var bool
-     */
-    public $isRepeat = false;
-
-    /**
-     * Является ли блокирующим
-     *
-     * @var bool
-     */
-    public $isBlocker = false;
-
-    /**
-     * Выходной или рабочий день
-     *
-     * @var string
-     */
-    public $isWeekend;
-
-    public function __construct($title, $startDay, $endDay, $idAuthor, $body, $isRepeat, $isBlocker, $isWeekend)
+    public static function tableName()
     {
-        parent::__construct();
-        $this->title = $title;
-        $this->startDay = $startDay;
-        $this->endDay = $endDay;
-        $this->isWeekend = $isWeekend;
-        $this->idAuthor = $idAuthor;
-        $this->body = $body;
-        $this->isRepeat = $isRepeat;
-        $this->isBlocker = $isBlocker;
+        return 'activity';
     }
 
-    public function attributeLabels()
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
     {
         return [
-                'title'     => 'Название события',
-                'startDay'  => 'Дата начала',
-                'endDay'    => 'Дата завершения',
-                'isWeekend' => 'Выходного дня',
-                'idAuthor'  => 'Инициатор',
-                'body'      => 'Описание события',
-                'isRepeat'  => 'Повторяющееся',
-                'isBlocker' => 'Блокирующее',
+            [['fk_user_id', 'title', 'description'], 'required'],
+            [['fk_user_id', 'is_repeated', 'is_blocker'], 'integer'],
+            [['created_at', 'updated_at', 'started_at', 'ended_at'], 'safe'],
+            [['title'], 'string', 'max' => 255],
+            [['description'], 'string', 'max' => 2000],
+            [
+                ['fk_user_id'],
+                'exist',
+                'skipOnError'     => true,
+                'targetClass'     => User::className(),
+                'targetAttribute' => ['fk_user_id' => 'id']
+            ],
         ];
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id'          => 'ID',
+            'fk_user_id'  => 'Fk User ID',
+            'title'       => 'Title',
+            'description' => 'Description',
+            'created_at'  => 'Created At',
+            'updated_at'  => 'Updated At',
+            'started_at'  => 'Started At',
+            'ended_at'    => 'Ended At',
+            'is_repeated' => 'Is Repeated',
+            'is_blocker'  => 'Is Blocker',
+        ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getFkUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'fk_user_id']);
+    }
 }

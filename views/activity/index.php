@@ -1,50 +1,42 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: User
- * Date: 21.10.2018
- * Time: 14:37
- */
 
-use yii\bootstrap\ActiveForm;
-use yii\bootstrap\Html;
-use yii\helpers\Url;
+use yii\helpers\Html;
+use yii\grid\GridView;
+
+/* @var $this yii\web\View */
+/* @var $searchModel app\models\ActivitySearch */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+
+$this->title = 'Activities';
+$this->params['breadcrumbs'][] = $this->title;
 ?>
-<a class="btn btn-primary active" href="<?= Url::to(['calendar/index']) ?>" role="button" aria-pressed="true"">Перейти в календарь</a>
+<div class="activity-index">
 
-  <h1><?= $model->title ?></h1>
+  <h1><?= Html::encode($this->title) ?></h1>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-<?php if ($model->startDay == $model->endDay): ?>
-  <p>Событие на <?= date("d.m.Y", $model->startDay) ?></p>
-<?php else: ?>
-  <p>Событие c <?= date("d.m.Y", $model->startDay) ?> по <?= date("d.m.Y", $model->endDay) ?></p>
-<?php endif; ?>
-  
-  <h3><?= $model->getAttributeLabel('body') ?></h3>
-  <div><?= $model->body ?></div>
-  
-  <h3><?= $model->getAttributeLabel('idAuthor') ?></h3>
-  <div><?= $model->idAuthor ?></div>
-  
-  <h3><?= $model->getAttributeLabel('isRepeat') ?></h3>
-<?php if ($model->isRepeat === true): ?>
-  <span>Да</span>
-<?php else: ?>
-  <span>Нет</span>
-<?php endif; ?>
-  
-  <h3><?= $model->getAttributeLabel('isBlocker') ?></h3>
-<?php if ($model->isBlocker === true): ?>
-  <span>Да</span>
-<?php else: ?>
-  <span>Нет</span>
-<?php endif; ?>
-  
-  <h3><?= $model->getAttributeLabel('isWeekend') ?></h3>
-<?php if ($model->isWeekend === true): ?>
-  <span>Да</span>
-<?php else: ?>
-  <span>Нет</span>
-<?php endif; ?>
+  <p>
+      <?= Html::a('Create Activity', ['create'], ['class' => 'btn btn-success']) ?>
+  </p>
 
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel'  => $searchModel,
+        'columns'      => [
+            ['class' => 'yii\grid\SerialColumn'],
 
+            'id',
+            'fk_user_id',
+            'title',
+            'description',
+            'created_at',
+            //'updated_at',
+            //'started_at',
+            //'ended_at',
+            //'is_repeated',
+            //'is_blocker',
+
+            ['class' => 'yii\grid\ActionColumn'],
+        ],
+    ]); ?>
+</div>

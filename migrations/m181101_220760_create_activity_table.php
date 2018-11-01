@@ -5,7 +5,7 @@ use yii\db\Migration;
 /**
  * Handles the creation of table `activity`.
  */
-class m181025_224357_create_activity_table extends Migration
+class m181101_220760_create_activity_table extends Migration
 {
     /**
      * {@inheritdoc}
@@ -14,19 +14,21 @@ class m181025_224357_create_activity_table extends Migration
     {
         $this->createTable('activity', [
             'id'          => $this->primaryKey(),
+            'fk_user_id'  => $this->integer(11)->notNull(),
             'title'       => $this->string(255)->notNull(),
-            'start_day'   => $this->date(11)->notNull(),
-            'end_day'     => $this->date(11),
-            'user_id'  => $this->integer(11)->notNull(),
-            'body'        => $this->string(2000)->notNull(),
-            'is_repeated' => $this->boolean()->notNull(),
-            'is_blocker'  => $this->boolean()->notNull(),
+            'description' => $this->string(2000)->notNull(),
+            'created_at'  => $this->date(11),
+            'updated_at'  => $this->date(11),
+            'started_at'  => $this->date(11),
+            'ended_at'    => $this->date(11),
+            'is_repeated' => $this->boolean(),
+            'is_blocker'  => $this->boolean(),
         ]);
 
         $this->addForeignKey(
             'fk_activity_user',
             'activity',
-            'user_id',
+            'fk_user_id',
             'user',
             'id');
     }
